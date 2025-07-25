@@ -4,7 +4,7 @@
 
 #include "kernel.c"
 
-#define LENGTH 4
+#define LENGTH (1 << 30) // modify to either 20, 24, and 30
 
 extern void euclidean_distance_asm(double X_1[], double X_2[], double Y_1[], double Y_2[], double Z[], int length);
 
@@ -12,18 +12,6 @@ double getTimeElapsed(clock_t start)
 {
     clock_t end = clock();
     return ((double)(end - start)) / (double)CLOCKS_PER_SEC;
-}
-
-void printOutput(double Z[], int length)
-{
-    printf("Z[%d] = {", length);
-    for (int i = 0; i < length; i++)
-    {
-        printf("%.8lf", Z[i]);
-        if (i < length - 1)
-            printf(", ");
-    }
-    printf("}\n");
 }
 
 void verifyAssembly(double Z_asm[], double Z_c[], int length)
@@ -66,7 +54,7 @@ int main()
 
     verifyAssembly(Z_asm, Z_c, LENGTH);
 
-    // printf("Total time taken: %ld seconds\n", totalTimeC);
+    printf("Total time taken: %ld seconds\n", totalTimeC);
 
     return 0;
 }
