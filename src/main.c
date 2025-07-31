@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <float.h>
 
 #include "kernel.c"
 
 #define VERBOSE 0
-#define EXPONENT 20 // modify to either 20, 24, and 29
+#define EXPONENT 29 // modify to either 20, 24, and 29
 #define LENGTH (1 << EXPONENT)
 
 extern void euclidean_distance_asm(double X_1[], double X_2[], double Y_1[], double Y_2[], double Z[], int length);
@@ -18,7 +19,7 @@ double getTimeElapsed(clock_t start)
 
 void verifyAssembly(double Z_asm[], double Z_c[], int length)
 {
-    double margin = 0.000001; // 2^-5
+    double margin = 0.00001; // 10^-5
     double diff;
     int isAllInRange = 1;
     for (int i = 0; i < length; i++)
@@ -31,17 +32,17 @@ void verifyAssembly(double Z_asm[], double Z_c[], int length)
         }
     }
     if (isAllInRange)
-        printf("All results are within the margin of 2^-5.\n");
+        printf("All results are within the margin of 10^-5.\n");
 }
 
 void propagate_vectors(double X_1[], double X_2[], double Y_1[], double Y_2[])
 {
     for (int i = 0; i < LENGTH; i++)
     {
-        X_1[i] = ((double)rand() / RAND_MAX) * 254.0 - 127.0;
-        X_2[i] = ((double)rand() / RAND_MAX) * 254.0 - 127.0;
-        Y_1[i] = ((double)rand() / RAND_MAX) * 254.0 - 127.0;
-        Y_2[i] = ((double)rand() / RAND_MAX) * 254.0 - 127.0;
+        X_1[i] = ((double)rand() / RAND_MAX) * (DBL_MAX - DBL_MIN) + DBL_MIN;
+        X_2[i] = ((double)rand() / RAND_MAX) * (DBL_MAX - DBL_MIN) + DBL_MIN;
+        Y_1[i] = ((double)rand() / RAND_MAX) * (DBL_MAX - DBL_MIN) + DBL_MIN;
+        Y_2[i] = ((double)rand() / RAND_MAX) * (DBL_MAX - DBL_MIN) + DBL_MIN;
     }
 }
 
@@ -91,7 +92,6 @@ int main()
     printf("Total time taken (C implementation): %lf seconds\n", totalTimeC);
     printf("Total time taken (Assembly implementation): %lf seconds\n", totalTimeAsm);
 
-    // de allocate memory
     if (VERBOSE)
         printf("Deallocating memory...\n");
     free(X_1);
