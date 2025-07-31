@@ -7,11 +7,9 @@ gcc main.c.obj kernel.obj -o main.exe -m64
 
 echo.
 for /l %%i in (1,1,30) do (
-    echo ==============================
-    echo.
-    echo Running %%i
+    echo ===== %%i =====
     echo.
     main.exe
     echo.
 )
-echo ==============================
+echo ==============
