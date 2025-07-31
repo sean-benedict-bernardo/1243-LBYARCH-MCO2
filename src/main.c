@@ -6,18 +6,26 @@
 #include "kernel.c"
 
 #define VERBOSE 0
-#define EXPONENT 29 // modify to either 20, 24, and 29
+#define EXPONENT 20 // modify to either 20, 24, and 29
 #define LENGTH (1 << EXPONENT)
 
 extern void euclidean_distance_asm(double X_1[], double X_2[], double Y_1[], double Y_2[], double Z[], int length);
 
-double getTimeElapsed(clock_t start)
+double get_time_elapsed(clock_t start)
 {
     clock_t end = clock();
     return ((double)(end - start)) / (double)CLOCKS_PER_SEC;
 }
 
-void verifyAssembly(double Z_asm[], double Z_c[], int length)
+void print_first_ten(double Z[])
+{
+    int max = LENGTH < 10 ? LENGTH : 10;
+    for (int i = 0; i < max; i++)
+        printf("%2d: %.8lf\n", i, Z[i]);
+    printf("\n");
+}
+
+void verify_assembly(double Z_asm[], double Z_c[], int length)
 {
     double margin = 0.00001; // 10^-5
     double diff;
@@ -32,26 +40,28 @@ void verifyAssembly(double Z_asm[], double Z_c[], int length)
         }
     }
     if (isAllInRange)
-        printf("All results are within the margin of 10^-5.\n");
+        printf("All x86-64 computations are within 10^-5 of the C implementation.\n");
 }
 
 void propagate_vectors(double X_1[], double X_2[], double Y_1[], double Y_2[])
 {
+    double max = (double)(1 << 30);
+    double min = -max + 1.0;
     for (int i = 0; i < LENGTH; i++)
     {
-        X_1[i] = ((double)rand() / RAND_MAX) * (DBL_MAX - DBL_MIN) + DBL_MIN;
-        X_2[i] = ((double)rand() / RAND_MAX) * (DBL_MAX - DBL_MIN) + DBL_MIN;
-        Y_1[i] = ((double)rand() / RAND_MAX) * (DBL_MAX - DBL_MIN) + DBL_MIN;
-        Y_2[i] = ((double)rand() / RAND_MAX) * (DBL_MAX - DBL_MIN) + DBL_MIN;
+        X_1[i] = min + ((double)rand() / RAND_MAX) * (max - min);
+        X_2[i] = min + ((double)rand() / RAND_MAX) * (max - min);
+        Y_1[i] = min + ((double)rand() / RAND_MAX) * (max - min);
+        Y_2[i] = min + ((double)rand() / RAND_MAX) * (max - min);
     }
 }
 
 int main()
 {
     double *X_1 = (double *)malloc(sizeof(double) * LENGTH);
-    double *X_2 = (double *)malloc(sizeof(double) * LENGTH); // = {3.0, 2.5, 2.5, 1.0};
-    double *Y_1 = (double *)malloc(sizeof(double) * LENGTH); // = {4.0, 3.0, 3.5, 3.0};
-    double *Y_2 = (double *)malloc(sizeof(double) * LENGTH); // = {2.0, 2.5, 1.0, 1.5};
+    double *X_2 = (double *)malloc(sizeof(double) * LENGTH);
+    double *Y_1 = (double *)malloc(sizeof(double) * LENGTH);
+    double *Y_2 = (double *)malloc(sizeof(double) * LENGTH);
 
     double *Z_c = (double *)malloc(sizeof(double) * LENGTH);
     double *Z_asm = (double *)malloc(sizeof(double) * LENGTH);
@@ -71,7 +81,9 @@ int main()
         printf("Calculating Euclidean distance (C implementation)...\n");
     start = clock();
     euclidean_distance_c(X_1, X_2, Y_1, Y_2, Z_c, LENGTH);
-    totalTimeC = getTimeElapsed(start);
+    totalTimeC = get_time_elapsed(start);
+    printf("First 10 results of C implementation:\n");
+    print_first_ten(Z_c);
     if (VERBOSE)
         printf("C implementation completed.\n\n");
 
@@ -79,13 +91,15 @@ int main()
         printf("Calculating Euclidean distance (Assembly implementation)...\n");
     start = clock();
     euclidean_distance_asm(X_1, X_2, Y_1, Y_2, Z_asm, LENGTH);
-    totalTimeAsm = getTimeElapsed(start);
+    totalTimeAsm = get_time_elapsed(start);
+    printf("First 10 results of Assembly implementation:\n");
+    print_first_ten(Z_asm);
     if (VERBOSE)
         printf("Assembly implementation completed.\n\n");
 
     if (VERBOSE)
         printf("Comparing results...\n");
-    verifyAssembly(Z_asm, Z_c, LENGTH);
+    verify_assembly(Z_asm, Z_c, LENGTH);
     printf("\n");
 
     printf("Results summary:\n");
