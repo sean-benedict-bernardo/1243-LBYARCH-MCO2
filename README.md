@@ -36,6 +36,12 @@ Standard Deviation
 | 2^24 | 0.0026 | 0.0019 |
 | 2^29 | 1.4049 | 1.6061 |
 
+The assembly implementation consistently outperforms the C implementation across all tested input sizes, with perfrmance gains becoming more noticeable at larger vector sizes. This is expected, as the assembly version is able to leverage low-level scalar SIMD floating-point instructions more directly and efficiently than the compiler-generated SIMD code in C.
+
+The tests show that writing optimized x86-64 assembly code with scalar SIMD floating-point instructions yields tangible performance benefits over the equivalent C implementation especially for compute-intensive operations like distance calculations across large vectors. This validates the utility of SIMD even in scalar form for data-parallel applications.
+
+While the performance difference isn't extreme at lower vector sizes, it scales significantly as the dataset grows, making assembly-based optimization a viable approach for high-performance computing tasks that are memory and computation bound.
+
 ## 2 Documentation
 
 ### 2.1 C Sample Run
