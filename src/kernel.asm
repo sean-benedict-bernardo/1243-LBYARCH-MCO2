@@ -1,7 +1,3 @@
-section .data
-    OUTPUT_STR db "%lf", 10, 0 ; Format string for printf
-    OUTPUT_DATA dq 0.0 ; Placeholder for output data
-
 section .text
 bits 64
 default rel
