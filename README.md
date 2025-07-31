@@ -10,7 +10,7 @@ LBYARCH S14 Group 1:
 
 ## 1 Comparative Analysis
 
-The complete output of our program runs can be found in unit_tests.xlsx, which includes the results of both the C and assembly implementations of the Euclidean distance algorithm. The results are compared based on execution time and correctness.
+The complete output of our program runs can be found in `unit_tests.xlsx`, which includes the results of both the C and assembly implementations of the Euclidean distance algorithm. The results are compared based on execution time and correctness.
 
 The summary statistics for the C and assembly implementations are as follows:
 
@@ -46,7 +46,12 @@ While the performance difference isn't extreme at lower vector sizes, it scales 
 
 ### 2.1 C Sample Run
 
-![C Implementation](images/c_run.jpg)
+![C Implementation](images/c_correctness_check.jpg)
+
+The above script is a separate file (see `src/correctness_check.c`) that runs the C implementation of the Euclidean distance algorithm and checks the correctness of the results against the provided sample case.
+
+![C Run](images/x86_run.jpg)
+The above script shows the output of both assembly and C implementations of the Euclidean distance algorithm.
 
 ### 2.2 Assembly Sample Run
 
